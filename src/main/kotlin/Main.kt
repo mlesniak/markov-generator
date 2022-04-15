@@ -20,7 +20,7 @@ class MarkovGenerator(source: String) {
         return stream
             .reader()
             .readLines() // Prevents special handling of \r.
-            .joinToString("")
+            .joinToString(" ")
             .split(" ")
             .map { it.trim() }
             .map { it.replace("\n", "") }
@@ -31,7 +31,7 @@ class MarkovGenerator(source: String) {
         var currentWord = startWord
 
         while (true) {
-            println("'$currentWord' ${currentWord.hexdump()}")
+            print("$currentWord ")
             if (currentWord.endWord()) {
                break
             }
