@@ -1,9 +1,9 @@
 # Overview
 
 Generate random pseudo-gibberish sentences from a source file by randomly choosing subsequent elements of the sentence
-based on initially randomly chosen starting words and occurences in the text.
+based on initially randomly chosen starting words and occurences in the text. Uses Kafka's _Die Verwandlung_ (obtained from Project Gutenberg) as a primary source.
 
-Uses Kafka's _Die Verwandlung_ (obtained from Project Gutenberg) as a primary source.
+I'm not completely happy with the result, but this code is just a playground for this idea and maybe future work based on that.
 
 ## Build
 
