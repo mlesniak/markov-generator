@@ -1,17 +1,23 @@
 package com.mlesniak.main
 
 class MarkovGenerator(source: String) {
-    private val database: MutableMap<String, MutableList<String>> = mutableMapOf()
+    private val database = mutableMapOf<String, MutableList<String>>()
+    private val startWords = mutableSetOf<String>()
 
     init {
         val words = wordlist(source)
         for (i in 0 until words.size - 2) {
-            val key = words[i]
-            val entry = words[i + 1]
-            database.merge(key, mutableListOf(entry)) { a, b -> a.addAll(b); a }
-        }
+            val cur = words[i]
+            val next = words[i + 1]
+            database.merge(cur, mutableListOf(next)) { a, b -> a.addAll(b); a }
 
-        // TODO(mlesniak) beginning of sentence
+            if (i == 0) {
+                startWords.add(cur)
+            }
+            if (cur.endWord()) {
+                startWords.add(next)
+            }
+        }
     }
 
     private fun wordlist(source: String): List<String> {
@@ -27,35 +33,28 @@ class MarkovGenerator(source: String) {
             .filter { it.isNotBlank() }
     }
 
-    fun run(startWord: String) {
-        var currentWord = startWord
-
-        while (true) {
-            print("$currentWord ")
-            if (currentWord.endWord()) {
-               break
-            }
-            val nextWords = database[currentWord] ?: break
-            currentWord = nextWords.random()
-        }
-    }
-
-    private fun String.hexdump(): String {
-        val sb = StringBuilder()
-
-        for (c in this) {
-            sb.append(String.format("%02X ", c.code))
-        }
-        sb.deleteCharAt(sb.length-1)
-
-        return sb.toString()
-    }
-
     private fun String.endWord(): Boolean {
-       return this.endsWith(".") || this.endsWith(";")
+        val ends = listOf(".", ";", "?", "!")
+        return ends.any { this.endsWith(it) }
+    }
+
+    fun run(numSentences: Int) {
+        repeat(numSentences) {
+            var currentWord = startWords.random()
+
+            while (true) {
+                print("$currentWord ")
+                if (currentWord.endWord()) {
+                    break
+                }
+                val nextWords = database[currentWord] ?: break
+                currentWord = nextWords.random()
+            }
+            println()
+        }
     }
 }
 
 fun main() {
-    MarkovGenerator("/die_verwandlung.txt").run("Er")
+    MarkovGenerator("/die_verwandlung.txt").run(3)
 }
